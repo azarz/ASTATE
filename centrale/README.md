@@ -2,6 +2,8 @@
 
 > Centrale de l'application météo
 
+uses https://github.com/KoRiGaN/Vue2Leaflet
+
 ## Build Setup
 
 ``` bash
