@@ -51,11 +51,13 @@ export default {
           });
         });
       })
+
+      setTimeout(this.updateValues, 2000);
     }
   },
+
   mounted: function(){
     this.updateValues();
-    setInterval(this.updateValues, 2000);
   }
 
 }
