@@ -1,20 +1,63 @@
 <template>
-  <div id="mapping" style="height: 300px">
-  <v-map :zoom=13 :center="[47.413220, -1.219482]">
-    <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
-    <v-marker :lat-lng="[47.413220, -1.219482]"></v-marker>
-  </v-map>
-</div>
+  <div id="mapping">
+    <v-map :zoom=4 :center="[45,3]">
+      <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
+      <v-marker v-for="probe in probes" :lat-lng="probe.latlng" :icon="probe.icon"></v-marker>
+    </v-map>
+  </div>
 </template>
 
 <script>
+const probeAddresses = ['172.31.58.22','172.31.58.20'];
+
 export default {
   name: 'mapping',
   data () {
     return {
-      msg: 'maps'
+      probes: [],
+      sunicon: L.icon({
+          iconUrl: './src/assets/sun.png',
+          iconSize: [40, 40],
+          iconAnchor: [20, 20]
+        }),
+      cloudicon: L.icon({
+          iconUrl: './src/assets/cloud.png',
+          iconSize: [40, 40],
+          iconAnchor: [20, 20]
+        }),
     }
+  },
+  computed: {
+    latlng: function() {
+      return [this.latitude,this.longitude];
+    }
+  },
+  methods: {
+    updateValues: function(){
+      this.probes = [];
+      probeAddresses.forEach(address=>{
+        fetch('http://'+ address + ':3000/last').then(result=>{
+          return result.json();
+        }).then(result=>{
+          let location = result.location[0];
+          let weather = this.sunicon;
+          if(result.measurements[0].wind_speed_min > 25){
+            weather = this.cloudicon;
+          }
+
+          this.probes.push({
+            latlng: [location.latitude, location.longitude],
+            icon: weather
+          });
+        });
+      })
+    }
+  },
+  mounted: function(){
+    this.updateValues();
+    setInterval(this.updateValues, 2000);
   }
+
 }
 </script>
 
@@ -23,26 +66,13 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  height: 350px; 
+  width: 50vw;
 }
 
 h1, h2 {
   font-weight: normal;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
 </style>

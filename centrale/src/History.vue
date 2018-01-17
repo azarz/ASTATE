@@ -1,6 +1,17 @@
 <template>
   <div id="history">
-    <h1>{{ msg }}</h1>
+    <h1>History from 
+      <select v-model='current_probe'>
+        <option v-for='address in $store.state.probeAddresses' :value="address">{{address}}</option>
+      </select>  
+    probe:</h1>
+    <p>history from 
+      <select v-model='time_period'>
+        <option :value="1">1 week</option>
+        <option :value="10">1 month</option>
+        <option :value="100">1 year</option>
+      </select>
+    </p>
   </div>
 </template>
 
@@ -9,13 +20,14 @@ export default {
   name: 'history',
   data () {
     return {
-      msg: ''
+      current_probe: '172.31.58.22',
+      time_period: 1
     }
   },
   created: function(){
-    fetch('https://api.coindesk.com/v1/bpi/historical/close.json').then(result=>
+    fetch('http://' + this.current_probe + ':3000/last/').then(result=>
       result.json()).then(result=>{
-        this.msg = result.bpi;
+        this.msg = result;
       });
   }
 }
@@ -26,26 +38,12 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  width: 50vw;
 }
 
 h1, h2 {
   font-weight: normal;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
 </style>

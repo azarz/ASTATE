@@ -1,24 +1,53 @@
 <template>
   <div id="dashboard">
-    <h1>Data from dummy probe:</h1>
-    <ul>
-      <li>temperature: {{ temperature }}</li>
-      <li>pressure: {{ pressure }}</li>
-      <li>humidity: {{ humidity }}</li>
-      <li>luminosity: {{ luminosity }}</li>
-      <li>wind_heading: {{ wind_heading }}</li>
-      <li>wind_speed_avg: {{ wind_speed_avg }}</li>
-      <li>wind_speed_max: {{ wind_speed_max }}</li>
-      <li>wind_speed_min: {{ wind_speed_min }}</li>
-    </ul>
+    <h1>Data from  
+      <select v-model='current_probe'>
+        <option v-for='address in $store.state.probeAddresses' :value="address">{{address}}</option>
+      </select>  
+    probe:</h1>
+    <table>
+      <tr><th scope='row'>temperature:</th><td>{{ temperature }}</td></tr>
+      <tr><th scope='row'>pressure:</th><td>{{ pressure }}</td></tr>
+      <tr><th scope='row'>humidity:</th><td>{{ humidity }}</td></tr>
+      <tr><th scope='row'>luminosity:</th><td>{{ luminosity }}</td></tr>
+      <tr><th scope='row'>wind_heading:</th><td>{{ wind_heading }}</td></tr>
+      <tr><th scope='row'>wind_speed_avg:</th><td>{{ wind_speed_avg }}</td></tr>
+      <tr><th scope='row'>wind_speed_max:</th><td>{{ wind_speed_max }}</td></tr>
+      <tr><th scope='row'>wind_speed_min:</th><td>{{ wind_speed_min }}</td></tr>
+    </table>
   </div>
 </template>
 
 <script>
+function headingDegreesToDirection(degrees){
+  // Clockwise rotation
+  if (degrees < 22.5 || degrees >= 337.5){
+    return 'North';
+  } else if (degrees >= 22.5 && degrees < 67.5) {
+    return 'Northeast';
+  } else if (degrees >= 67.5 && degrees < 112.5) {
+    return 'East'
+  } else if (degrees >= 112.5 && degrees < 157.5) {
+    return 'Southeast';
+  } else if (degrees >= 157.5 && degrees < 202.5) {
+    return 'South';
+  } else if (degrees >= 202.5 && degrees < 247.5) {
+    return 'Southwest';
+  } else if (degrees >= 247.5 && degrees < 292.5) {
+    return 'West';
+  } else if (degrees >= 292.5 && degrees < 337.5) {
+    return 'Northwest';
+  } else {
+    return 'unknown';
+  }
+}
+
+
 export default {
   name: 'dashboard',
   data () {
     return {
+      current_probe: '172.31.58.20',
       temperature: '',
       pressure: '',
       humidity: '',
@@ -26,26 +55,30 @@ export default {
       wind_heading: '',
       wind_speed_avg: '',
       wind_speed_max: '',
-      wind_speed_min: ''
+      wind_speed_min: '',
     }
   },
   methods: {
     updateValues: function(){
-      fetch('http://172.31.58.20:3000/test').then(result=>{
+      fetch('http://' + this.current_probe + ':3000/last/').then(result=>{
         return result.json();}).then(result=>{
           let measurements = result.measurements[0];
           this.temperature = measurements.temperature;
           this.pressure = measurements.pressure;
           this.humidity = measurements.humidity;
           this.luminosity = measurements.luminosity;
-          this.wind_heading = measurements.wind_heading;
+          this.wind_heading = headingDegreesToDirection(measurements.wind_heading);
           this.wind_speed_avg = measurements.wind_speed_avg;
           this.wind_speed_max = measurements.wind_speed_max;
           this.wind_speed_min = measurements.wind_speed_min;
         });
+
     }
   },
-  mounted: function(){this.updateValues();}
+  mounted: function(){
+    this.updateValues();
+    setInterval(this.updateValues, 2000);
+  }
 }
 </script>
 
@@ -54,26 +87,19 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  width: 33vw;
 }
 
 h1, h2 {
   font-weight: normal;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
+td{
+  text-align: right;
 }
 
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
+th{
+  text-align: left;
 }
 </style>

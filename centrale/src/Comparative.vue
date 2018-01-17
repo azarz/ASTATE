@@ -1,6 +1,12 @@
 <template>
   <div id="comparative">
     <h1>{{ msg }}</h1>
+    <select v-model='current_property'>
+      <option v-for='prop in $store.state.properties' :value="prop">{{prop}}</option>
+    </select>  
+    <table>
+      <tr v-for='address in $store.state.probeAddresses'><th scope='row'>{{ address }}:</th><td>{{ address.current_property }}</td></tr>
+    </table>
   </div>
 </template>
 
@@ -9,7 +15,8 @@ export default {
   name: 'comparative',
   data () {
     return {
-      msg: 'comparative'
+      msg: 'comparative',
+      current_property: 'temperature'
     }
   }
 }
@@ -20,26 +27,12 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  width: 40vw;
 }
 
 h1, h2 {
   font-weight: normal;
 }
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
 </style>
