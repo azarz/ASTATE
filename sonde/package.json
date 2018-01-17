@@ -1,0 +1,30 @@
+{
+  "name": "astate-server",
+  "version": "1.0.0",
+  "description": "the server of astate project",
+  "main": "serverAPI.js",
+  "scripts": {
+    "start" : "node serverAPI.js",
+    "watch" : "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azarz/ASTATE.git"
+  },
+  "keywords": [
+    "astate"
+  ],
+  "author": "@arnaudgregoire, @azarz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/azarz/ASTATE/issues"
+  },
+  "homepage": "https://github.com/azarz/ASTATE#readme",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "influx": "^5.0.0-alpha.4",
+    "nodemon": "^1.14.11"
+  }
+}
