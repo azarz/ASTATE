@@ -244,7 +244,7 @@ function compareRain() {
 			    if (err){
 			    	reject(err);
 			    }
-			    console.log(data);
+			    //console.log(data);
 			  	resolve(data);
 			});
 		})
@@ -271,7 +271,7 @@ function compareRain() {
 function transformToJSON(string){
 		
 	let splitted  = string.split(',');
-	let date      = splitted[1];
+	let date      = splitted[1].trim();
 	let latitude  = splitted[2]/100;
 	let longitude = splitted[4]/100;
 
@@ -289,7 +289,7 @@ function transformToJSON(string){
 
 function transformLogToJSON(string) {
 
-	let json = {"date" : string};
+	let json = {"date" : string.trim()};
 
 	return json;
 
@@ -302,7 +302,7 @@ function writeSensors(json) {
 	    measurement: 'measures',
 	    tags: { host: os.hostname() },
 	    fields: {        
-		    date          : json.date,
+		    date          : json.date.trim(),
 		    temperature   : json.measure[0].value,
 		    pressure      : json.measure[1].value,
 		    humidity      : json.measure[2].value,

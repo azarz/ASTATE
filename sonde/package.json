@@ -4,8 +4,8 @@
   "description": "the server of astate project",
   "main": "serverAPI.js",
   "scripts": {
-    "start" : "node serverAPI.js",
-    "watch" : "nodemon",
+    "start": "node serverAPI.js",
+    "watch": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
