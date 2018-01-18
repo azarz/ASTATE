@@ -73,7 +73,7 @@ export default {
           this.wind_speed_min = measurements.wind_speed_min;
         });
 
-      setInterval(this.updateValues, 2000);
+      setTimeout(this.updateValues, 2000);
     }
   },
   mounted: function(){
