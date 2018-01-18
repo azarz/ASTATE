@@ -65,6 +65,7 @@ influx.getDatabaseNames()
   		influx.createDatabase('dbtest');
   		initSensors();
   		initLocation();
+  		initRain();
   	}
   	console.log(names);
 	loop();
@@ -255,8 +256,9 @@ function compareRain() {
 
 		let result = promises[1];
 		let json   = transformLogToJSON(result);
-		console.log(json);
-		console.log(promises[0]);
+		//console.log('rain');
+		//console.log(json);
+		//console.log(promises[0]);
 		if(promises[0].date != json.date){
 			console.log('new rain value detected');		
 			writeRain(json);
