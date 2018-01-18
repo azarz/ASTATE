@@ -1,15 +1,15 @@
 <template>
   <div id="history">
     <h1>History from 
-      <select v-model='current_probe'>
+      <select v-model='probe_address' @change="getHistory">
         <option v-for='address in $store.state.probeAddresses' :value="address">{{address}}</option>
       </select>  
     probe:</h1>
     <p>history from 
-      <select v-model='time_period'>
-        <option :value="1">1 week</option>
-        <option :value="10">1 month</option>
-        <option :value="100">1 year</option>
+      <select v-model='time_period' @change="getHistory">
+        <option :value="60480000">1 week</option>
+        <option :value="259200000">1 month</option>
+        <option :value="3155760000">1 year</option>
       </select>
     </p>
   </div>
@@ -20,15 +20,37 @@ export default {
   name: 'history',
   data () {
     return {
-      current_probe: '172.31.58.22',
-      time_period: 1
+      probe_address: this.$store.state.probeAddresses[0],
+      time_period: 60480000
     }
   },
-  created: function(){
-    fetch('http://' + this.current_probe + ':3000/last/').then(result=>
-      result.json()).then(result=>{
-        this.msg = result;
+  computed: {
+    current_probe: function(){
+      return this.$store.state.probes[this.probe_address];
+    }
+  },
+  methods: {
+    getHistory: function(){
+      let stop = new Date(Date.now());
+      let start = new Date(stop.getTime() - this.time_period);
+      fetch('http://' + this.probe_address + ':3000/interval?start=' + start.toISOString() + '&stop=' + stop.toISOString()).then(result=>{
+        return result.json();
+      }).then(result=>{
+          let measurements = result.measurements[0];
+          let location = result.location[0];
+          this.temperature = measurements.temperature;
+          this.pressure = measurements.pressure;
+          this.humidity = measurements.humidity;
+          this.luminosity = measurements.luminosity;
+
+          this.wind_speed_avg = measurements.wind_speed_avg;
+          this.wind_speed_max = measurements.wind_speed_max;
+          this.wind_speed_min = measurements.wind_speed_min;
       });
+    }
+  },
+  mounted: function() {
+    this.getHistory();
   }
 }
 </script>
