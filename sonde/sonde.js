@@ -2,9 +2,9 @@
 var fs           = require('fs');
 const Influx     = require('influx');
 const os         = require('os');
-const sensorsDir = '/var/log/sensors';
-const gpsDir     = '/var/log/gpsNmea';
-const rainDir    = '/var/log/rainCounter.log';
+const sensorsDir = '/dev/shm/sensors';
+const gpsDir     = '/dev/shm/gpsNmea';
+const rainDir    = '/dev/shm/rainCounter.log';
 
 
 const influx = new Influx.InfluxDB({
