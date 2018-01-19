@@ -16,21 +16,21 @@ Vue.component('v-marker', Vue2Leaflet.Marker);
 function headingDegreesToDirection(degrees){
   // Clockwise rotation
   if (degrees < 22.5 || degrees >= 337.5){
-    return 'North';
+    return 'South to North';
   } else if (degrees >= 22.5 && degrees < 67.5) {
-    return 'Northeast';
+    return 'Southwest to Northeast';
   } else if (degrees >= 67.5 && degrees < 112.5) {
-    return 'East'
+    return 'West to East'
   } else if (degrees >= 112.5 && degrees < 157.5) {
-    return 'Southeast';
+    return 'Northwest to Southeast';
   } else if (degrees >= 157.5 && degrees < 202.5) {
-    return 'South';
+    return 'North to South';
   } else if (degrees >= 202.5 && degrees < 247.5) {
-    return 'Southwest';
+    return 'Northeast to Southwest';
   } else if (degrees >= 247.5 && degrees < 292.5) {
-    return 'West';
+    return 'East to West';
   } else if (degrees >= 292.5 && degrees < 337.5) {
-    return 'Northwest';
+    return 'Southeast to Northwest';
   } else {
     return 'unknown';
   }
@@ -55,7 +55,7 @@ const rainicon = L.icon({
 
 const Probe = function(address) {
   this.address = address;
-  this.latlng = [45,3];
+  this.latlng = [90,0];
 
   this.updateValues = function(){
     fetch('http://' + this.address + ':3000/last/').then(result=>{
@@ -75,14 +75,14 @@ const Probe = function(address) {
           let data_rainfall = new Date(result.rainfall[0].date);
           let current_date = new Date(Date.now());
 
-          this.rainfall = (current_date.getTime() - data_rainfall.getTime()) < 3600000;
+          this.rainfall = (current_date.getTime() - data_rainfall.getTime()) < 15000;
 
           this.latlng = [location.latitude, location.longitude];
 
           this.icon = sunicon;
           if (this.rainfall) {
             this.icon = rainicon;
-          } else if(result.measurements[0].wind_speed_min > 25){
+          } else if(result.measurements[0].pressure < 995){
             this.icon = cloudicon;
           }
     });
@@ -92,10 +92,11 @@ const Probe = function(address) {
 
 const store = new Vuex.Store({
 	state:{
-    probeAddresses: ['172.31.58.20','172.31.58.22'],//,'172.31.43.61'],
+    probeAddresses: ['172.31.43.60','172.31.58.22'],//,'172.31.58.30','172.31.43.61'],
 		probes: {
-      '172.31.58.20': new Probe('172.31.58.20'),
+      '172.31.43.60': new Probe('172.31.43.60'),
       '172.31.58.22': new Probe('172.31.58.22')
+      //'172.31.58.30': new Probe('172.31.58.30'),
       //'172.31.43.61': new Probe('172.31.43.61')
     },
 		properties: ['temperature', 'pressure', 'humidity', 'luminosity', 'wind_heading', 'wind_speed_avg',

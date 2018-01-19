@@ -28,12 +28,8 @@ export default {
 
 <style lang="scss">
 #mapping {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
   height: 350px; 
-  width: 50vw;
+  width: 70vw;
 }
 
 h1, h2 {

@@ -1,27 +1,47 @@
 <template>
-  <div id="history">
-    <h1>History from 
+  <div id="loading" v-if="loading">
+    <div>
+      <p><img src="./assets/loading.gif" alt="loading gif"></p>
+      <p>Loading history...</p>
+    </div>
+  </div>
+  <div id="history" v-else>
+    <h1>History from probe:
       <select v-model='probe_address' @change="getHistory">
         <option v-for='address in $store.state.probeAddresses' :value="address">{{address}}</option>
-      </select>  
-    probe:</h1>
-    <p>history from 
+      </select>
+    </h1>
+    <p>value: <select v-model='property' @change="getHistory">
+      <option v-for='prop in $store.state.properties' :value="prop">{{prop}}</option>
+    </select>
+    period:
       <select v-model='time_period' @change="getHistory">
-        <option :value="60480000">1 week</option>
-        <option :value="259200000">1 month</option>
-        <option :value="3155760000">1 year</option>
+        <option :value="60000">1 minute</option>
+        <option :value="3600000">1 hour</option>
+        <option :value="86400000">1 day</option>
+        <option :value="604800000">1 week</option>
+        <option :value="2592000000">1 month</option>
+        <option :value="31557600000">1 year</option>
       </select>
     </p>
+    <history-chart :datesarray="dates_array" :property="property" :propertyarray="property_array"></history-chart>
   </div>
 </template>
 
 <script>
+import HistoryChart from './HistoryChart'
+
 export default {
   name: 'history',
+  components: { HistoryChart },
   data () {
     return {
       probe_address: this.$store.state.probeAddresses[0],
-      time_period: 60480000
+      time_period: 86400000,
+      property: 'temperature',
+      dates_array: [],
+      property_array: [],
+      loading: false
     }
   },
   computed: {
@@ -31,21 +51,25 @@ export default {
   },
   methods: {
     getHistory: function(){
+      console.log(this.time_period);
       let stop = new Date(Date.now());
       let start = new Date(stop.getTime() - this.time_period);
-      fetch('http://' + this.probe_address + ':3000/interval?start=' + start.toISOString() + '&stop=' + stop.toISOString()).then(result=>{
+      this.loading = true;
+      fetch('http://' + this.probe_address + ':3000/interval/?start=' + start.toISOString() + '&stop=' + stop.toISOString()).then(result=>{
         return result.json();
       }).then(result=>{
-          let measurements = result.measurements[0];
-          let location = result.location[0];
-          this.temperature = measurements.temperature;
-          this.pressure = measurements.pressure;
-          this.humidity = measurements.humidity;
-          this.luminosity = measurements.luminosity;
+          let measurements_array = result.measurements;
+          let rainfall_array = result.rainfall;
+          // Reversing the array order since the API returns the data in last to first order
+          if (this.property != 'rainfall'){
+            this.dates_array = measurements_array.map(measure=>measure.date).reverse();
+            this.property_array = measurements_array.map(measure=>measure[this.property]).reverse();
+          } else {
+            this.dates_array = rainfall_array.map(measure=>measure.date).reverse();
+            this.property_array = rainfall_array.map(measure=>1).reverse();
+          }
+          this.loading = false;
 
-          this.wind_speed_avg = measurements.wind_speed_avg;
-          this.wind_speed_max = measurements.wind_speed_max;
-          this.wind_speed_min = measurements.wind_speed_min;
       });
     }
   },
@@ -57,15 +81,27 @@ export default {
 
 <style lang="scss">
 #history {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
   width: 50vw;
 }
 
 h1, h2 {
   font-weight: normal;
 }
+
+#loading {
+  width: 50vw;
+  height: 400px;
+  z-index: 10000;
+  background-color: rgba(0,0,0,0.05);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#loading img {
+  width: 50px;
+}
+
 
 </style>

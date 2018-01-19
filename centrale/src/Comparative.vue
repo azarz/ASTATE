@@ -2,7 +2,7 @@
   <div id="comparative">
     <h1>Comparison:</h1>
     <select v-model='current_property'>
-      <option v-for='prop in $store.state.properties' :value="prop">{{prop}}</option>
+      <option v-for='prop in $store.state.properties' :value="prop">{{prop}} </option>
     </select>  
     <table>
       <tr v-for='probe in $store.state.probes'><th scope='row'>{{ probe.address }}:</th><td>{{ probe[current_property] }}</td></tr>
@@ -33,11 +33,7 @@ export default {
 
 <style lang="scss">
 #comparative {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  width: 40vw;
+  width: 20vw;
 }
 
 h1, h2 {
