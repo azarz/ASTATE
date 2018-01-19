@@ -149,9 +149,13 @@ function compareSensors() {
 				    if (err){
 				    	console.log(err);
 				    	reject(err);
+				    }
+				    try{
+						json = JSON.parse(data);
 				    } 
-				  	json = JSON.parse(data);
-				  	//console.log('last file date ' + json.date);
+				    catch(error){
+				    	reject(error);
+				    }
 				  	resolve(json);
 				});
 		})
