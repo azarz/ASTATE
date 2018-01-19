@@ -346,9 +346,15 @@ function writeRain(json) {
 }
 
 function loop() {
-	compareSensors();
-	compareLocation();
-	compareRain();
+	try{
+		compareSensors();
+		compareLocation();
+		compareRain();
+	}
+	catch(error){
+		  console.log(error);
+	}
+
 	//console.log("test");
 	setTimeout(loop,1000);
 }
