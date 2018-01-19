@@ -2,9 +2,9 @@
 var fs           = require('fs');
 const Influx     = require('influx');
 const os         = require('os');
-const sensorsDir = '/var/log/sensors';
-const gpsDir     = '/var/log/gpsNmea';
-const rainDir    = '/var/log/rainCounter.log';
+const sensorsDir = '/dev/shm/sensors';
+const gpsDir     = '/dev/shm/gpsNmea';
+const rainDir    = '/dev/shm/rainCounter.log';
 
 
 const influx = new Influx.InfluxDB({
@@ -149,9 +149,13 @@ function compareSensors() {
 				    if (err){
 				    	console.log(err);
 				    	reject(err);
+				    }
+				    try{
+						json = JSON.parse(data);
 				    } 
-				  	json = JSON.parse(data);
-				  	//console.log('last file date ' + json.date);
+				    catch(error){
+				    	reject(error);
+				    }
 				  	resolve(json);
 				});
 		})
@@ -244,7 +248,7 @@ function compareRain() {
 			    if (err){
 			    	reject(err);
 			    }
-			    console.log(data);
+			    //console.log(data);
 			  	resolve(data);
 			});
 		})
@@ -271,7 +275,7 @@ function compareRain() {
 function transformToJSON(string){
 		
 	let splitted  = string.split(',');
-	let date      = splitted[1];
+	let date      = splitted[1].trim();
 	let latitude  = splitted[2]/100;
 	let longitude = splitted[4]/100;
 
@@ -289,7 +293,7 @@ function transformToJSON(string){
 
 function transformLogToJSON(string) {
 
-	let json = {"date" : string};
+	let json = {"date" : string.trim()};
 
 	return json;
 
@@ -302,7 +306,7 @@ function writeSensors(json) {
 	    measurement: 'measures',
 	    tags: { host: os.hostname() },
 	    fields: {        
-		    date          : json.date,
+		    date          : json.date.trim(),
 		    temperature   : json.measure[0].value,
 		    pressure      : json.measure[1].value,
 		    humidity      : json.measure[2].value,
@@ -346,9 +350,15 @@ function writeRain(json) {
 }
 
 function loop() {
-	compareSensors();
-	compareLocation();
-	compareRain();
+	try{
+		compareSensors();
+		compareLocation();
+		compareRain();
+	}
+	catch(error){
+		  console.log(error);
+	}
+
 	//console.log("test");
 	setTimeout(loop,1000);
 }
