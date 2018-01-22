@@ -103,5 +103,10 @@ h1, h2 {
   width: 50px;
 }
 
+canvas {
+  width: 48vw;
+  height: 30vh;
+}
+
 
 </style>

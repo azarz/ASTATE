@@ -28,7 +28,6 @@ export default {
 
 <style lang="scss">
 #mapping {
-  height: 350px; 
   width: 70vw;
 }
 
