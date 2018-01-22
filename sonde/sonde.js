@@ -360,5 +360,5 @@ function loop() {
 	}
 
 	//console.log("test");
-	setTimeout(loop,1000);
+	setTimeout(loop,60000);
 }
