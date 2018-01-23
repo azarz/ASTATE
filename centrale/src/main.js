@@ -13,6 +13,7 @@ Vue.component('v-map', Vue2Leaflet.Map);
 Vue.component('v-tilelayer', Vue2Leaflet.TileLayer);
 Vue.component('v-marker', Vue2Leaflet.Marker);
 
+// Function used to convert the degrees from the API into heading name
 function headingDegreesToDirection(degrees){
   // Clockwise rotation
   if (degrees < 22.5 || degrees >= 337.5){
@@ -36,6 +37,7 @@ function headingDegreesToDirection(degrees){
   }
 }
 
+// Icons used on the map
 const sunicon = L.icon({
       iconUrl: './src/assets/sun.png',
       iconSize: [40, 40],
@@ -52,11 +54,14 @@ const rainicon = L.icon({
     iconAnchor: [20, 20]
   });
 
-
+// Probe class, contains all the useful values and the method to update them
+// Constructed using the probe serve address
 const Probe = function(address) {
   this.address = address;
+  // Default location: in the far north, so the pointer insn't seen
   this.latlng = [90,0];
 
+  // Method to update the probe values by fetching on the server
   this.updateValues = function(){
     fetch('http://' + this.address + ':3000/last/').then(result=>{
         return result.json();
@@ -72,13 +77,15 @@ const Probe = function(address) {
           this.wind_speed_max = measurements.wind_speed_max;
           this.wind_speed_min = measurements.wind_speed_min;
 
+          // The API returns a date for the last rainfall.
+          // We convert it into a boolean: true if the last rainfall is from less than 15 seconds
           let data_rainfall = new Date(result.rainfall[0].date);
           let current_date = new Date(Date.now());
-
           this.rainfall = (current_date.getTime() - data_rainfall.getTime()) < 15000;
 
           this.latlng = [location.latitude, location.longitude];
 
+          // Defining the icon according to the weather
           this.icon = sunicon;
           if (this.rainfall) {
             this.icon = rainicon;
@@ -89,7 +96,7 @@ const Probe = function(address) {
   }
 }
 
-
+// The Vuex store. Contains the probes and a method to update the data in all of them
 const store = new Vuex.Store({
 	state:{
     probeAddresses: ['172.31.43.60','172.31.58.22','172.31.43.58','172.31.43.61','172.31.43.62','172.31.43.65'],
@@ -113,7 +120,6 @@ const store = new Vuex.Store({
     }
   }
 });
-
 
 new Vue({
   el: '#dashboard',
