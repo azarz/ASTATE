@@ -7,6 +7,8 @@ const gpsDir     = '/dev/shm/gpsNmea';
 const rainDir    = '/dev/shm/rainCounter.log';
 
 
+
+
 const influx = new Influx.InfluxDB({
  host: 'localhost',
  database: 'dbtest',

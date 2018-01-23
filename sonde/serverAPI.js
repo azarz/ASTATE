@@ -9,7 +9,14 @@ const app         = express();
 
 app.use(cors());
 
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
 
+io.on('connection', socket => {socket.emit('welcome', { message: 'Vous êtes connecté à  ASTATE!' });});
+setInterval( () => {io.emit('update')} , 60000);
+
+
+ 
 app.get(['/last/all','/last'], function (req, res) {
 
 	console.log("request /last in coming from " + req.connection.remoteAddress);
