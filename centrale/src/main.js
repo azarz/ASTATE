@@ -92,12 +92,14 @@ const Probe = function(address) {
 
 const store = new Vuex.Store({
 	state:{
-    probeAddresses: ['172.31.43.60','172.31.58.22'],//,'172.31.58.30','172.31.43.61'],
+    probeAddresses: ['172.31.43.60','172.31.58.22','172.31.43.58','172.31.43.61','172.31.43.62','172.31.43.65'],
 		probes: {
       '172.31.43.60': new Probe('172.31.43.60'),
-      '172.31.58.22': new Probe('172.31.58.22')
-      //'172.31.58.30': new Probe('172.31.58.30'),
-      //'172.31.43.61': new Probe('172.31.43.61')
+      '172.31.58.22': new Probe('172.31.58.22'),
+      '172.31.43.58': new Probe('172.31.43.58'),
+      '172.31.43.61': new Probe('172.31.43.61'),
+      '172.31.43.62': new Probe('172.31.43.62'),
+      '172.31.43.65': new Probe('172.31.43.65')
     },
 		properties: ['temperature', 'pressure', 'humidity', 'luminosity', 'wind_heading', 'wind_speed_avg',
 		'wind_speed_max','wind_speed_min', 'rainfall']

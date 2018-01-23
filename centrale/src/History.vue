@@ -51,7 +51,6 @@ export default {
   },
   methods: {
     getHistory: function(){
-      console.log(this.time_period);
       let stop = new Date(Date.now());
       let start = new Date(stop.getTime() - this.time_period);
       this.loading = true;
@@ -67,6 +66,16 @@ export default {
           } else {
             this.dates_array = rainfall_array.map(measure=>measure.date).reverse();
             this.property_array = rainfall_array.map(measure=>1).reverse();
+          }
+          for(let i = 0; i < this.dates_array.length; i++){
+            let date = new Date(this.dates_array[i]);
+            let finalString = "";
+            finalString += date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear();
+            finalString += " ";
+            finalString += date.getHours();
+            finalString += ":";
+            finalString += date.getMinutes();
+            this.dates_array[i] = finalString;
           }
           this.loading = false;
 
@@ -84,13 +93,8 @@ export default {
   width: 50vw;
 }
 
-h1, h2 {
-  font-weight: normal;
-}
-
 #loading {
   width: 50vw;
-  height: 400px;
   z-index: 10000;
   background-color: rgba(0,0,0,0.05);
 
@@ -104,8 +108,7 @@ h1, h2 {
 }
 
 canvas {
-  width: 48vw;
-  height: 30vh;
+  height: 25vh;
 }
 
 

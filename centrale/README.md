@@ -1,8 +1,8 @@
-# centrale
+# Centrale ASTATE
 
-> Centrale de l'application météo
+> Centrale de l'application météo ASTATE
 
-uses https://github.com/KoRiGaN/Vue2Leaflet
+uses https://github.com/KoRiGaN/Vue2Leaflet and https://github.com/apertureless/vue-chartjs
 
 ## Build Setup
 
