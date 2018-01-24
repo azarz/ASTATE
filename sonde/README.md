@@ -32,7 +32,7 @@ cd sonde
 npm install
 ```
 
-## Lancement
+## Lancement
 
 Pour lancer l'application on a besoin de 4 terminaux :
 
