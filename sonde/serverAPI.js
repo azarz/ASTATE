@@ -7,16 +7,22 @@ const os          = require('os');
 const promesse    = require ('./promises/promises.js');     
 const app         = express();
 
+//Création du serveur
 app.use(cors());
-
 var server = require('http').createServer(app);
+//Création des websockets
 var io = require('socket.io')(server);
 
+// A la connection, emit un message "welcome", sinon toutes les 60 secondes, emit un message "update"
 io.on('connection', socket => {socket.emit('welcome', { message: 'Vous êtes connecté à  ASTATE!' });});
 setInterval( () => {io.emit('update')} , 60000);
 
 
- 
+ /* getion de toutes les routes possibles : ici gestion de la route /last et /last/all
+  * Chaque route fonctionne entièrement avec des listes de promesses.
+  * Une fois que toutes les promesses sont résolues, le json est renvoyé.
+  * Chaque promesse contient un appel à la base de donnée qui sera résolu une fois les informations extraites
+  */
 app.get(['/last/all','/last'], function (req, res) {
 
 	console.log("request /last in coming from " + req.connection.remoteAddress);
@@ -33,18 +39,17 @@ app.get(['/last/all','/last'], function (req, res) {
 		let location = promises[0];
 		let result   = promises[1];
 		let rainfall = promises[2];
-		//console.log(rainfall);
+
 		let json = {
 			"location"     : location,
 			"rainfall"     : rainfall,
 			"measurements" : result	}
-		//console.log(json);
 		res.send(json);
 	})
 
-	//console.log("server listening on port 3000");
 })
 
+//Gestion de la route /last/location, ici une liste contenant une seule promessse
 app.get('/last/location', function (req, res) {
 
 	console.log("request /last/location in coming from " + req.connection.remoteAddress);
@@ -62,7 +67,7 @@ app.get('/last/location', function (req, res) {
 })
 
 
-
+//Même chose pour la route /last/rainfall
 app.get('/last/rainfall', function (req, res) {
 
 	console.log("request /last/rainfall in coming from " + req.connection.remoteAddress);
@@ -80,6 +85,7 @@ app.get('/last/rainfall', function (req, res) {
 })
 
 
+// Même chose pour la route /last/measuremnts
 app.get('/last/measurements', function (req, res) {
 
 	console.log("request /last/measurements in coming from " + req.connection.remoteAddress);
@@ -97,7 +103,7 @@ app.get('/last/measurements', function (req, res) {
 })
 
 
-
+//Gestion de la route /interval qui va utiliser des promesses légèrement différentes
 app.get('/interval', function (req, res) {
 
 	console.log("request /interval in coming from " + req.connection.remoteAddress);
@@ -117,17 +123,17 @@ app.get('/interval', function (req, res) {
 		let location = promises[0];
 		let result   = promises[1];
 		let rainfall = promises[2];
-		//console.log(rainfall);
 		let json = {
 		"location"     : location,
 		"rainfall"     : rainfall,
-		"measurements" : result	}//console.log(json);
+		"measurements" : result	}
 
 		res.send(json);
 	})
 
 })
 
+//Gestion de la route /interval/location
 app.get('/interval/location', function (req, res) {
 
 	console.log("request /interval in coming from " + req.connection.remoteAddress);
