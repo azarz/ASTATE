@@ -11,5 +11,5 @@ Développer une application de permettant la visualisation de données de (fauss
 ## Installation :
 Voir les README des deux parties respectives.
 
-## Aperçu
+## Aperçu :
 ![alt text](iamvideo.gif "aperçu")
