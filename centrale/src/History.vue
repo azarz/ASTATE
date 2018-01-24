@@ -1,10 +1,13 @@
 <template>
+  <!-- If the data is loading, we display a nive loading gif -->
   <div id="loading" v-if="loading">
     <div>
       <p><img src="./assets/loading.gif" alt="loading gif"></p>
       <p>Loading history...</p>
     </div>
   </div>
+
+  <!-- If any select value is changed, we get the history using the getHistory() method -->
   <div id="history" v-else>
     <h1>History from probe:
       <select v-model='probe_address' @change="getHistory">
@@ -29,7 +32,8 @@
 </template>
 
 <script>
-import HistoryChart from './HistoryChart'
+// Importing the chart component
+import HistoryChart from './HistoryChart';
 
 export default {
   name: 'history',
@@ -37,6 +41,7 @@ export default {
   data () {
     return {
       probe_address: this.$store.state.probeAddresses[0],
+      // The time period in miliseconds, linked to the value in the period HTML select
       time_period: 86400000,
       property: 'temperature',
       dates_array: [],
@@ -50,16 +55,24 @@ export default {
     }
   },
   methods: {
+    // A function to get the history from a given probe, for a given property and for a given time period
     getHistory: function(){
+      // Calculating the start and stop dates according to the current time
       let stop = new Date(Date.now());
       let start = new Date(stop.getTime() - this.time_period);
+
+      // Activating the loading state
       this.loading = true;
+
+      // Fetching the history from the API
       fetch('http://' + this.probe_address + ':3000/interval/?start=' + start.toISOString() + '&stop=' + stop.toISOString()).then(result=>{
         return result.json();
       }).then(result=>{
           let measurements_array = result.measurements;
           let rainfall_array = result.rainfall;
+
           // Reversing the array order since the API returns the data in last to first order
+          // And separating the mesurements/rainfall cases
           if (this.property != 'rainfall'){
             this.dates_array = measurements_array.map(measure=>measure.date).reverse();
             this.property_array = measurements_array.map(measure=>measure[this.property]).reverse();
@@ -67,6 +80,8 @@ export default {
             this.dates_array = rainfall_array.map(measure=>measure.date).reverse();
             this.property_array = rainfall_array.map(measure=>1).reverse();
           }
+
+          // Transforming the dates into more readable strings
           for(let i = 0; i < this.dates_array.length; i++){
             let date = new Date(this.dates_array[i]);
             let finalString = "";
@@ -77,12 +92,21 @@ export default {
             finalString += date.getMinutes();
             this.dates_array[i] = finalString;
           }
+
+          // Stopping the loading state
           this.loading = false;
 
+      }).catch(()=>{
+        // If there is an error, we stop the loading and return no data
+        this.dates_array = [];
+        this.property_array = [];
+        this.loading=false;
       });
     }
   },
+
   mounted: function() {
+    // Getting the history first when mounted
     this.getHistory();
   }
 }
