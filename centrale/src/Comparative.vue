@@ -19,7 +19,9 @@ export default {
     }
   },
   methods: {
+    // Without this functions, the values, which are nested, don't update on display
     updateValues: function(){
+      // Forcing the display update
       this.$forceUpdate();
 
       setTimeout(this.updateValues, 3000);

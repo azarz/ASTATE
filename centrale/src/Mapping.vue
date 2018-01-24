@@ -2,6 +2,8 @@
   <div id="mapping">
     <v-map :zoom=4 :center="[45,3]">
       <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png"></v-tilelayer>
+      <!-- All the work is done using the Vue2leaflet module (https://github.com/KoRiGaN/Vue2Leaflet) 
+        The only parameters are the probes positions and icons-->
       <v-marker v-for="probe in $store.state.probes" :lat-lng="probe.latlng" :icon="probe.icon"></v-marker>
     </v-map>
   </div>
@@ -12,16 +14,6 @@ export default {
   name: 'mapping',
   data () {
     return {}
-  },
-  methods: {
-    updateValues: function(){
-      this.$store.commit('updateData', this);
-
-      setTimeout(this.updateValues, 3000);
-    }
-  },
-  mounted: function(){
-    this.$forceUpdate();
   }
 }
 </script>

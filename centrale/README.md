@@ -2,7 +2,7 @@
 
 > Centrale de l'application météo ASTATE
 
-uses https://github.com/KoRiGaN/Vue2Leaflet and https://github.com/apertureless/vue-chartjs
+Uses https://github.com/KoRiGaN/Vue2Leaflet and https://github.com/apertureless/vue-chartjs.
 
 ## Build Setup
 
