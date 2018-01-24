@@ -5,6 +5,7 @@ const http    = require('http');
 const cors    = require('cors');
 const os      = require('os');
 
+// La structure de la base de donnée
 const influx = new Influx.InfluxDB({
  host: 'localhost',
  database: 'dbtest',
@@ -50,7 +51,7 @@ const influx = new Influx.InfluxDB({
  ]
 })
 
-
+// 2 templates de promises utilisés pour faire les appels à la base de donnée
 module.exports = {
 	dbAllPromise: function(field){
 		return new Promise((resolve, reject) => {

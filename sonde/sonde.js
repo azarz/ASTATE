@@ -1,14 +1,15 @@
 'use strict'
-var fs           = require('fs');
-const Influx     = require('influx');
-const os         = require('os');
-const sensorsDir = '/dev/shm/sensors';
+// Tous les modules utilisés
+var fs           = require('fs'); // pour la lecture de fichier
+const Influx     = require('influx');// pour la lecture de base de données
+const os         = require('os');// pour la lecture de chemin d'accès
+
+//Les différents chemins d'accès dans lesquels sont stockés les données
+const sensorsDir = '/dev/shm/sensors'; 
 const gpsDir     = '/dev/shm/gpsNmea';
 const rainDir    = '/dev/shm/rainCounter.log';
 
-
-
-
+// Le schéma correspondant à la base de données
 const influx = new Influx.InfluxDB({
  host: 'localhost',
  database: 'dbtest',
@@ -54,6 +55,7 @@ const influx = new Influx.InfluxDB({
  ]
 })
 
+//Création eventuel de la base de donnée si cette dernière n'existe pas
 influx.getDatabaseNames()
   .then(names => {
   	let dbexist = false;
@@ -77,7 +79,7 @@ influx.getDatabaseNames()
     console.error(`Error creating Influx database!`);
   })
 
-
+// Insertion d'une valeur dans la table Sensors
 function initSensors() {
 	const p =	new Promise((resolve, reject) => {
 		let json;
@@ -95,7 +97,7 @@ function initSensors() {
 	p.then(json =>writeSensors(json));
 }
 
-
+// Insertion d'une valeur dans la table de Location
 function initLocation(argument) {
 	const p =	new Promise((resolve, reject) => {
 		let json;
@@ -111,7 +113,7 @@ function initLocation(argument) {
 	p.then(json =>writeLocation(json));
 }
 
-
+//Insertion d'une valeur dans la table rainfall
 function initRain(argument) {
 	const p =	new Promise((resolve, reject) => {
 		let json;
@@ -127,6 +129,9 @@ function initRain(argument) {
 	p.then(json =>writeRain(json));
 }
 
+
+// On compare la dernière valeur du fichier avec celle de la base de donnée. Si elles sont différentes
+// on insère la valeur de senseurs du fichier dans la base de données
 function compareSensors() {
 	const promises = [];
 	promises.push(
@@ -172,6 +177,7 @@ function compareSensors() {
 	})
 }
 
+// Meme chose pour la location
 function compareLocation() {
 
 	const promises = [];
@@ -223,6 +229,7 @@ function compareLocation() {
 
 }
 
+// Même chose pour le fichier rainfall
 function compareRain() {
 
 	const promises = [];
@@ -274,6 +281,8 @@ function compareRain() {
 
 }
 
+
+//On transforme en JSON le contenu que l'on récupère dans le fichier (string)
 function transformToJSON(string){
 		
 	let splitted  = string.split(',');
@@ -293,6 +302,7 @@ function transformToJSON(string){
 	return json;		
 }
 
+// On transforme le format des logs en json
 function transformLogToJSON(string) {
 
 	let json = {"date" : string.trim()};
@@ -301,6 +311,8 @@ function transformLogToJSON(string) {
 
 }
 
+
+// Fonction d'écriture d'une valeur de senseur dans la base de donnée
 function writeSensors(json) {
 	console.log("writing sensors...");
 	influx.writePoints([
@@ -322,6 +334,7 @@ function writeSensors(json) {
   ])
 }
 
+// Même chose pour la location
 function writeLocation(json){
 	console.log("writing location...");
 	influx.writePoints([
@@ -337,6 +350,7 @@ function writeLocation(json){
   ])
 }
 
+// Même chose pour la pluie
 function writeRain(json) {
 	console.log("writing rain...");
 
@@ -351,6 +365,9 @@ function writeRain(json) {
   ])
 }
 
+// la fonction loop s'appelle elle même toutes les 60 secondes pour mettre à jour sa base de donnée
+// Elle compare les nouvelles valeurs des fichiers avec celles comprises dans la base de données puis éventuellement 
+// les stockent.
 function loop() {
 	try{
 		compareSensors();
