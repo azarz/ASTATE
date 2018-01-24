@@ -4,6 +4,7 @@ export default {
   name: 'history-chart',
   props: ['datesarray','property','propertyarray'],
   methods: {
+    // Using the vue-chartjs module (https://github.com/apertureless/vue-chartjs)
     render: function() {
       let dataset = {
               label: this.property,

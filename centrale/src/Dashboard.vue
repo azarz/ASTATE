@@ -27,6 +27,7 @@ export default {
 
   methods: {
     updateValues: function(){
+      // Updating the store data, this vue is the only one responsible for that
       this.$store.commit('updateData', this);
 
       setTimeout(this.updateValues, 3000);
