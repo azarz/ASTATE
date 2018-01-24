@@ -1,6 +1,6 @@
 # Sonde ASTATE
 
-> Sonde de l'application météo ASTATE
+> Sonde de l'application météo ASTATE (Raspberry 172.31.43.60)
 
 ## Prérequis
 
